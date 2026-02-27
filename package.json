@@ -1,14 +1,14 @@
 {
   "name": "@codecrafters/claude-code",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
   "description": "Build your own Claude Code challenge, from CodeCrafters",
-  "type": "module",
   "scripts": {
     "dev": "bun run app/main.ts"
   },
+  "type": "module",
   "dependencies": {
-    "openai": "^6.16.0"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
+    "openai": "^6.25.0"
   }
 }
