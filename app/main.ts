@@ -1,6 +1,12 @@
 import OpenAI from 'openai';
 
 import toolParser from './tools/toolParser';
+import {ReadTool} from './tools/readTool';
+import type {
+  ChatCompletionAssistantMessageParam,
+  ChatCompletionToolMessageParam,
+  ChatCompletionUserMessageParam,
+} from 'openai/resources';
 
 async function main() {
   const [, , flag, prompt] = process.argv;
@@ -26,52 +32,58 @@ async function main() {
     baseURL: baseURL,
   });
 
-  const readTool = {
-    type: 'function',
-    function: {
-      name: 'Read',
-      description: 'Read and return the contents of a file',
-      parameters: {
-        type: 'object',
-        properties: {
-          file_path: {
-            type: 'string',
-            description: 'The path to the file to read',
-          },
-        },
-        required: ['file_path'],
-      },
-    },
-  } as const;
-
-  const response = await client.chat.completions.create({
-    model: model,
-    messages: [{role: 'user', content: prompt}],
-    tools: [readTool],
-  });
-
-  if (!response.choices || response.choices.length === 0) {
-    throw new Error('no choices in response');
-  }
+  const messageHistory: (
+    | ChatCompletionUserMessageParam
+    | ChatCompletionAssistantMessageParam
+    | ChatCompletionToolMessageParam
+  )[] = [{role: 'user', content: prompt}];
+  let finished = false;
+  let content = '';
 
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error('Logs from your program will appear here!');
 
-  if (response.choices[0].message.tool_calls) {
-    console.warn('Tool calls:', response.choices[0].message.tool_calls);
-    const toolCall = response.choices[0].message.tool_calls[0];
-    const messageContent = response.choices[0].message.content;
-    if (toolCall) {
-      console.warn('Executing tool call');
-      // Parse the tool call and execute the corresponding function.
-      toolParser(toolCall);
-    } else {
-      console.log('No tool calls found in the response.');
-      console.log(response.choices[0].message.content);
+  while (!finished) {
+    console.log('Calling the OpenAI API with the following message history:');
+    console.log(messageHistory);
+    const response = await client.chat.completions.create({
+      model: model,
+      messages: messageHistory,
+      tools: [ReadTool],
+    });
+    if (!response.choices || response.choices.length === 0) {
+      throw new Error('no choices in response');
     }
-  } else {
-    console.log(response.choices[0].message.content);
+    // Add the assistant's message to the message history.
+    messageHistory.push(response.choices[0].message);
+    const messageContent = response.choices[0].message.content;
+    console.log('Message content from OpenAI API response:');
+    console.log(messageContent);
+
+    console.log('Tool calls from OpenAI API response:');
+    console.log(response.choices[0].message.tool_calls);
+    if (
+      response.choices[0].message.tool_calls &&
+      response.choices[0].message.tool_calls.length > 0
+    ) {
+      // If there are tool calls, parse and execute each tool call and add the tool response to the message history.
+      response.choices[0].message.tool_calls.forEach((toolCall) => {
+        if (toolCall) {
+          const toolResponse = toolParser(toolCall);
+          messageHistory.push(toolResponse);
+        } else {
+          console.log('No tool calls found in the response.');
+        }
+      });
+    } else {
+      console.log(
+        'No tool calls found in the response. Assuming the response is finished.',
+      );
+      content = messageContent || '';
+      finished = true;
+    }
   }
+  console.log(content);
 }
 
 main();
