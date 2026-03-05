@@ -23,14 +23,9 @@ export default function readTool(
       content: 'Error: Access to the specified file is not allowed',
     };
   }
-  // For testing: log the current working directory and the file path being read.
-  console.log(`Current working directory: ${process.cwd()}`);
-  console.log(`Reading file at path: ${filePath}`);
   // Read the file and return its contents.
   try {
     const data = fs.readFileSync(filePath, 'utf8');
-    // Print the raw file contents to stdout so that it can be captured in tests.
-    console.log(data);
     return {
       role: 'tool',
       tool_call_id: toolCallId,

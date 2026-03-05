@@ -44,8 +44,6 @@ async function main() {
   console.error('Logs from your program will appear here!');
 
   while (!finished) {
-    console.log('Calling the OpenAI API with the following message history:');
-    console.log(messageHistory);
     const response = await client.chat.completions.create({
       model: model,
       messages: messageHistory,
@@ -57,11 +55,6 @@ async function main() {
     // Add the assistant's message to the message history.
     messageHistory.push(response.choices[0].message);
     const messageContent = response.choices[0].message.content;
-    console.log('Message content from OpenAI API response:');
-    console.log(messageContent);
-
-    console.log('Tool calls from OpenAI API response:');
-    console.log(response.choices[0].message.tool_calls);
     if (
       response.choices[0].message.tool_calls &&
       response.choices[0].message.tool_calls.length > 0
@@ -71,14 +64,9 @@ async function main() {
         if (toolCall) {
           const toolResponse = toolParser(toolCall);
           messageHistory.push(toolResponse);
-        } else {
-          console.log('No tool calls found in the response.');
         }
       });
     } else {
-      console.log(
-        'No tool calls found in the response. Assuming the response is finished.',
-      );
       content = messageContent || '';
       finished = true;
     }
