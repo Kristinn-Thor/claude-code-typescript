@@ -1,5 +1,7 @@
 import OpenAI from 'openai';
 
+import toolParser from './tools/toolParser';
+
 async function main() {
   const [, , flag, prompt] = process.argv;
   const apiKey = process.env.OPENROUTER_API_KEY;
@@ -55,8 +57,21 @@ async function main() {
   // You can use print statements as follows for debugging, they'll be visible when running tests.
   console.error('Logs from your program will appear here!');
 
-  // TODO: Uncomment the lines below to pass the first stage
-  console.log(response.choices[0].message.content);
+  if (response.choices[0].message.tool_calls) {
+    console.warn('Tool calls:', response.choices[0].message.tool_calls);
+    const toolCall = response.choices[0].message.tool_calls[0];
+    const messageContent = response.choices[0].message.content;
+    if (toolCall) {
+      console.warn('Executing tool call');
+      // Parse the tool call and execute the corresponding function.
+      toolParser(toolCall);
+    } else {
+      console.log('No tool calls found in the response.');
+      console.log(response.choices[0].message.content);
+    }
+  } else {
+    console.log(response.choices[0].message.content);
+  }
 }
 
 main();
