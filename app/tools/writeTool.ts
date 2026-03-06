@@ -56,8 +56,12 @@ export const WriteTool = {
           type: 'string',
           description: 'The path to the file to write to',
         },
+        content: {
+          type: 'string',
+          description: 'The content to write to the file',
+        },
       },
-      required: ['file_path'],
+      required: ['file_path', 'content'],
     },
   },
 } as const;
