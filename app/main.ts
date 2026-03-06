@@ -79,10 +79,10 @@ async function main() {
     }
   }
   console.log(content);
-  console.log('Full message history:', messageHistory);
 }
 
 main();
 
 // Test command:
 // "Delete the old readme file. Always respond with Deleted README_old.md if it is deleted. If it does not exist, create it and then delet it."
+//  console.log('Full message history:', messageHistory);

@@ -12,15 +12,17 @@ const PROJECT_DIR = path.resolve(__dirname, '../../');
  * @returns true if allowed, false otherwise
  */
 export function isAllowedCommand(command: string): boolean {
-  // Only allow touch, mkdir, rm commands
+  // Only allow touch, mkdir, rm, ls commands
   const touchMatch = command.match(/^touch\s+(.+)$/);
   const mkdirMatch = command.match(/^mkdir\s+(.+)$/);
   const rmMatch = command.match(/^rm\s+(.+)$/);
+  const lsMatch = command.match(/^ls\s+(.+)$/);
 
   let targetPath = '';
   if (touchMatch) targetPath = touchMatch[1];
   else if (mkdirMatch) targetPath = mkdirMatch[1];
   else if (rmMatch) targetPath = rmMatch[1];
+  else if (lsMatch) targetPath = lsMatch[1];
   else return false;
 
   // Resolve absolute path
