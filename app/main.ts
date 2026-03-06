@@ -7,6 +7,7 @@ import type {
   ChatCompletionToolMessageParam,
   ChatCompletionUserMessageParam,
 } from 'openai/resources';
+import {WriteTool} from './tools/writeTool';
 
 async function main() {
   const [, , flag, prompt] = process.argv;
@@ -47,7 +48,7 @@ async function main() {
     const response = await client.chat.completions.create({
       model: model,
       messages: messageHistory,
-      tools: [ReadTool],
+      tools: [ReadTool, WriteTool],
     });
     if (!response.choices || response.choices.length === 0) {
       throw new Error('no choices in response');
