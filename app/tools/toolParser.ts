@@ -1,4 +1,5 @@
-import readTool, {type ToolResponse} from './readTool';
+import bashTool, {BashTool} from './bashTool';
+import readTool from './readTool';
 import writeTool from './writeTool';
 
 type ToolFunction = {
@@ -10,6 +11,12 @@ type ToolCall = {
   id: string;
   type: string;
   function?: ToolFunction;
+};
+
+export type ToolResponse = {
+  role: 'tool';
+  tool_call_id: string;
+  content: string;
 };
 
 const argumentsParser = (func?: ToolFunction) => {
@@ -54,16 +61,36 @@ export default function parseToolCall(toolCall: ToolCall): ToolResponse {
       return readTool(args.file_path, toolCall.id);
     case 'Write':
       const writeArgs = argumentsParser(toolCall.function);
-      if (!writeArgs.file_path || !writeArgs.content) {
+      if (!writeArgs.file_path) {
         return {
           role: 'tool',
           tool_call_id: toolCall.id,
           content:
-            'The "Write" function requires "file_path" and "content" arguments, but they were not provided',
+            'The "Write" function requires a "file_path" argument, but it was not provided',
+        };
+      }
+      if (writeArgs.content === undefined) {
+        return {
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          content:
+            'The "Write" function was called but no "content" argument was provided.',
         };
       }
       // Call the writeTool
       return writeTool(writeArgs.file_path, writeArgs.content, toolCall.id);
+    case 'Bash':
+      const bashArgs = argumentsParser(toolCall.function);
+      if (!bashArgs.command) {
+        return {
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          content:
+            'The "Bash" function requires a "command" argument, but it was not provided',
+        };
+      }
+      // Call the bashTool
+      return bashTool(bashArgs.command, toolCall.id);
     default:
       return {
         role: 'tool',

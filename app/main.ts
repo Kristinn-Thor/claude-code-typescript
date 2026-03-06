@@ -8,6 +8,7 @@ import type {
   ChatCompletionUserMessageParam,
 } from 'openai/resources';
 import {WriteTool} from './tools/writeTool';
+import {BashTool} from './tools/bashTool';
 
 async function main() {
   const [, , flag, prompt] = process.argv;
@@ -45,34 +46,43 @@ async function main() {
   console.error('Logs from your program will appear here!');
 
   while (!finished) {
-    const response = await client.chat.completions.create({
-      model: model,
-      messages: messageHistory,
-      tools: [ReadTool, WriteTool],
-    });
-    if (!response.choices || response.choices.length === 0) {
-      throw new Error('no choices in response');
-    }
-    // Add the assistant's message to the message history.
-    messageHistory.push(response.choices[0].message);
-    const messageContent = response.choices[0].message.content;
-    if (
-      response.choices[0].message.tool_calls &&
-      response.choices[0].message.tool_calls.length > 0
-    ) {
-      // If there are tool calls, parse and execute each tool call and add the tool response to the message history.
-      response.choices[0].message.tool_calls.forEach((toolCall) => {
-        if (toolCall) {
-          const toolResponse = toolParser(toolCall);
-          messageHistory.push(toolResponse);
-        }
+    try {
+      const response = await client.chat.completions.create({
+        model: model,
+        messages: messageHistory,
+        tools: [ReadTool, WriteTool, BashTool],
       });
-    } else {
-      content = messageContent || '';
+      if (!response.choices || response.choices.length === 0) {
+        throw new Error('no choices in response');
+      }
+      // Add the assistant's message to the message history.
+      messageHistory.push(response.choices[0].message);
+      const messageContent = response.choices[0].message.content;
+      if (
+        response.choices[0].message.tool_calls &&
+        response.choices[0].message.tool_calls.length > 0
+      ) {
+        // If there are tool calls, parse and execute each tool call and add the tool response to the message history.
+        response.choices[0].message.tool_calls.forEach((toolCall) => {
+          if (toolCall) {
+            const toolResponse = toolParser(toolCall);
+            messageHistory.push(toolResponse);
+          }
+        });
+      } else {
+        content = messageContent || '';
+        finished = true;
+      }
+    } catch (error) {
+      console.error('Error during chat completion:', error);
       finished = true;
     }
   }
   console.log(content);
+  console.log('Full message history:', messageHistory);
 }
 
 main();
+
+// Test command:
+// "Delete the old readme file. Always respond with Deleted README_old.md if it is deleted. If it does not exist, create it and then delet it."

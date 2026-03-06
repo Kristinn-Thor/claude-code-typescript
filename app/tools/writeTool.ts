@@ -1,10 +1,5 @@
 import fs from 'fs';
-
-export type ToolResponse = {
-  role: 'tool';
-  tool_call_id: string;
-  content: string;
-};
+import type {ToolResponse} from './toolParser';
 
 /**
  * Writes the contents of a file at the given path.
@@ -12,7 +7,7 @@ export type ToolResponse = {
  * If it does exist, it will be overwritten.
  * @param filePath The path to the file to write to
  * @param content The content to write to the file
- * @returns The result of the write operation
+ * @returns ToolResponse
  */
 export default function writeTool(
   filePath: string,

@@ -1,15 +1,10 @@
 import fs from 'fs';
-
-export type ToolResponse = {
-  role: 'tool';
-  tool_call_id: string;
-  content: string;
-};
+import type {ToolResponse} from './toolParser';
 
 /**
  * Reads the contents of a file at the given path.
  * @param filePath The path to the file to read
- * @returns The contents of the file
+ * @returns ToolResponse
  */
 export default function readTool(
   filePath: string,
