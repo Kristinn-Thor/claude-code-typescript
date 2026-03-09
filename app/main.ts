@@ -58,7 +58,6 @@ async function main() {
       // Add the assistant's message to the message history.
       messageHistory.push(response.choices[0].message);
       const messageContent = response.choices[0].message.content;
-      console.log(`${response.choices[0].message.role} ->`, messageContent);
       if (
         response.choices[0].message.tool_calls &&
         response.choices[0].message.tool_calls.length > 0
@@ -68,7 +67,6 @@ async function main() {
           if (toolCall) {
             const toolResponse = await toolParser(toolCall);
             messageHistory.push(toolResponse);
-            console.log(`Tool ->`, toolResponse.content);
           }
         }
       } else {
