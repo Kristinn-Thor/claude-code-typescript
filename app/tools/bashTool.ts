@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import exec from 'child_process';
 import type {ToolResponse} from './toolParser';
@@ -62,7 +61,7 @@ export default function bashTool(
   }
   return new Promise((resolve) => {
     try {
-      exec.exec(command, {cwd: PROJECT_DIR}, (error, stdout) => {
+      exec.exec(command, (error, stdout) => {
         if (error) {
           resolve({
             role: 'tool',
