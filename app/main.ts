@@ -84,5 +84,6 @@ async function main() {
 
 main();
 
-// Test command:
+// Test commands:
 // "List files using ls and delete the old readme file. Always respond with Deleted README_old.md if it is deleted. If it does not exist, create it and then delet it."
+// 'List project files using ls and delete the old readme file.'
