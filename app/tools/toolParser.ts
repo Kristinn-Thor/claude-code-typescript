@@ -38,64 +38,71 @@ const argumentsParser = (func?: ToolFunction) => {
  * @param toolCall Tool call response from the OpenAI API
  * @returns ToolResponse
  */
-export default function parseToolCall(toolCall: ToolCall): ToolResponse {
+export default async function parseToolCall(
+  toolCall: ToolCall,
+): Promise<ToolResponse> {
   if (!toolCall.function) {
-    return {
+    return Promise.resolve({
       role: 'tool',
       tool_call_id: toolCall.id,
       content: 'No function specified in tool call',
-    };
+    });
   }
   switch (toolCall.function.name) {
-    case 'Read':
+    case 'Read': {
       const args = argumentsParser(toolCall.function);
       if (!args.file_path) {
-        return {
+        return Promise.resolve({
           role: 'tool',
           tool_call_id: toolCall.id,
           content:
             'The "Read" function requires a "file_path" argument, but it was not provided',
-        };
+        });
       }
       // Call the readTool
-      return readTool(args.file_path, toolCall.id);
-    case 'Write':
+      return Promise.resolve(readTool(args.file_path, toolCall.id));
+    }
+    case 'Write': {
       const writeArgs = argumentsParser(toolCall.function);
       if (!writeArgs.file_path) {
-        return {
+        return Promise.resolve({
           role: 'tool',
           tool_call_id: toolCall.id,
           content:
             'The "Write" function requires a "file_path" argument, but it was not provided',
-        };
+        });
       }
       if (writeArgs.content === undefined) {
-        return {
+        return Promise.resolve({
           role: 'tool',
           tool_call_id: toolCall.id,
           content:
             'The "Write" function was called but no "content" argument was provided.',
-        };
+        });
       }
       // Call the writeTool
-      return writeTool(writeArgs.file_path, writeArgs.content, toolCall.id);
-    case 'Bash':
+      return Promise.resolve(
+        writeTool(writeArgs.file_path, writeArgs.content, toolCall.id),
+      );
+    }
+    case 'Bash': {
       const bashArgs = argumentsParser(toolCall.function);
       if (!bashArgs.command) {
-        return {
+        return Promise.resolve({
           role: 'tool',
           tool_call_id: toolCall.id,
           content:
             'The "Bash" function requires a "command" argument, but it was not provided',
-        };
+        });
       }
-      // Call the bashTool
-      return bashTool(bashArgs.command, toolCall.id);
+      // Call the bashTool (returns a Promise)
+      return await bashTool(bashArgs.command, toolCall.id);
+    }
     default:
-      return {
+      return Promise.resolve({
         role: 'tool',
         tool_call_id: toolCall.id,
         content: `The tool function "${toolCall.function.name}" is not supported`,
-      };
+      });
   }
 }

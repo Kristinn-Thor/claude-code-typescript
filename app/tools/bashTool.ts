@@ -7,36 +7,39 @@ const PROJECT_DIR = path.resolve(__dirname, '../../');
 
 /**
  * Validates if a shell command is allowed for file/directory creation or file deletion within the project directory.
- * Allowed commands: touch <file>, mkdir <dir>, rm <file>
+ * Allowed commands: touch <file>, mkdir <dir>, rm <file>, ls <dir>
+ * Restrictions:
+ * - The target file/directory must be within the project directory.
  * @param command The shell command to validate
  * @returns true if allowed, false otherwise
  */
 export function isAllowedCommand(command: string): boolean {
-  // Only allow touch, mkdir, rm, ls commands
-  const touchMatch = command.match(/^touch\s+(.+)$/);
-  const mkdirMatch = command.match(/^mkdir\s+(.+)$/);
-  const rmMatch = command.match(/^rm\s+(.+)$/);
-  const lsMatch = command.match(/^ls\s+(.+)$/);
+  // Only allow touch, mkdir, rm, ls commands (with or without arguments)
+  const touchMatch = command.match(/^touch(?:\s+(.*))?$/);
+  const mkdirMatch = command.match(/^mkdir(?:\s+(.*))?$/);
+  const rmMatch = command.match(/^rm(?:\s+(.*))?$/);
+  const lsMatch = command.match(/^ls(?:\s+(.*))?$/);
 
   let targetPath = '';
-  if (touchMatch) targetPath = touchMatch[1];
-  else if (mkdirMatch) targetPath = mkdirMatch[1];
-  else if (rmMatch) targetPath = rmMatch[1];
-  else if (lsMatch) targetPath = lsMatch[1];
+  if (touchMatch) targetPath = touchMatch[1] || '';
+  else if (mkdirMatch) targetPath = mkdirMatch[1] || '';
+  else if (rmMatch) targetPath = rmMatch[1] || '';
+  else if (lsMatch) targetPath = lsMatch[1] || '';
   else return false;
+
+  // If no argument is provided (e.g., 'ls'), allow
+  if (targetPath === '') {
+    // Only allow for ls, not for touch/mkdir/rm
+    return !!lsMatch;
+  }
 
   // Resolve absolute path
   const absTargetPath = path.resolve(PROJECT_DIR, targetPath);
   // Ensure path is within project directory
   if (!absTargetPath.startsWith(PROJECT_DIR)) return false;
-  // For rm, ensure it's not a directory
+  // For rm, allow deletion of files and directories as long as path is within project directory
   if (rmMatch) {
-    try {
-      const stat = fs.statSync(absTargetPath);
-      if (stat.isDirectory()) return false;
-    } catch (e) {
-      // If file doesn't exist, allow (rm will error out)
-    }
+    return true;
   }
   return true;
 }
@@ -49,43 +52,40 @@ export function isAllowedCommand(command: string): boolean {
 export default function bashTool(
   command: string,
   toolCallId: string,
-): ToolResponse {
+): Promise<ToolResponse> {
   if (!isAllowedCommand(command)) {
-    return {
+    return Promise.resolve({
       role: 'tool',
       tool_call_id: toolCallId,
       content: 'Error: Access to the specified command is not allowed',
-    };
+    });
   }
-  // Execute the command
-  let result: ToolResponse = {
-    role: 'tool',
-    tool_call_id: toolCallId,
-    content: '',
-  };
-  try {
-    exec.exec(command, {cwd: PROJECT_DIR}, (error, stout) => {
-      if (error) {
-        result = {
-          role: 'tool',
-          tool_call_id: toolCallId,
-          content: `Error executing command: ${error.message}`,
-        };
-      }
-      result = {
+  return new Promise((resolve) => {
+    try {
+      exec.exec(command, {cwd: PROJECT_DIR}, (error, stdout) => {
+        if (error) {
+          resolve({
+            role: 'tool',
+            tool_call_id: toolCallId,
+            content: `Error executing command: ${error.message}`,
+          });
+        } else {
+          resolve({
+            role: 'tool',
+            tool_call_id: toolCallId,
+            content: stdout,
+          });
+        }
+      });
+    } catch (err) {
+      console.error('Error executing command:', err);
+      resolve({
         role: 'tool',
         tool_call_id: toolCallId,
-        content: stout,
-      };
-    });
-  } catch (err) {
-    result = {
-      role: 'tool',
-      tool_call_id: toolCallId,
-      content: `Error executing command}`,
-    };
-  }
-  return result;
+        content: `Error executing command`,
+      });
+    }
+  });
 }
 
 export const BashTool = {

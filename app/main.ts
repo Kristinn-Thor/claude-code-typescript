@@ -63,12 +63,12 @@ async function main() {
         response.choices[0].message.tool_calls.length > 0
       ) {
         // If there are tool calls, parse and execute each tool call and add the tool response to the message history.
-        response.choices[0].message.tool_calls.forEach((toolCall) => {
+        for (const toolCall of response.choices[0].message.tool_calls) {
           if (toolCall) {
-            const toolResponse = toolParser(toolCall);
+            const toolResponse = await toolParser(toolCall);
             messageHistory.push(toolResponse);
           }
-        });
+        }
       } else {
         content = messageContent || '';
         finished = true;
@@ -79,10 +79,10 @@ async function main() {
     }
   }
   console.log(content);
+  // console.log('Full message history:', messageHistory);
 }
 
 main();
 
 // Test command:
-// "Delete the old readme file. Always respond with Deleted README_old.md if it is deleted. If it does not exist, create it and then delet it."
-//  console.log('Full message history:', messageHistory);
+// "List files using ls and delete the old readme file. Always respond with Deleted README_old.md if it is deleted. If it does not exist, create it and then delet it."
