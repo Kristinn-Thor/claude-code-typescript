@@ -8,5 +8,7 @@ understand code and perform actions through tool calls.
 ## To run
 
 1. Ensure you have `bun (1.3)` installed locally.
-2. Run `./your_program.sh` to run your program, which is implemented in
+2. Run `./run_program.sh` to run your program, which is implemented in
    `app/main.ts`.
+
+   Example: `./run_program.sh -p "What can you tell me about this project?"`
