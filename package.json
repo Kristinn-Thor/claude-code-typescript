@@ -1,9 +1,9 @@
 {
-  "name": "@codecrafters/claude-code",
+  "name": "claude-code-typescript",
   "devDependencies": {
     "@types/bun": "latest"
   },
-  "description": "Build your own Claude Code challenge, from CodeCrafters",
+  "description": "Claude Code assistant replica, based on CodeCrafters challenge",
   "scripts": {
     "dev": "bun run app/main.ts"
   },
