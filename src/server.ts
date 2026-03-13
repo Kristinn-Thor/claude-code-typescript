@@ -10,8 +10,14 @@ app.use(bodyParser.json());
 app.post('/assistant', async (req, res) => {
   const body = req.body;
   const prompt = body.prompt;
+  const chat_history = body.chat_history;
   if (!prompt) {
     return res.status(400).json({error: 'Prompt is required'});
+  }
+  if (chat_history && !Array.isArray(chat_history)) {
+    return res
+      .status(400)
+      .json({error: 'chat_history must be an array if provided'});
   }
   try {
     const response = await api({
