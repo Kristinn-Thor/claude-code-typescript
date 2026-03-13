@@ -30,7 +30,7 @@ export default function writeTool(
       tool_call_id: toolCallId,
       content: newContent,
     };
-  } catch (err) {
+  } catch {
     return {
       role: 'tool',
       tool_call_id: toolCallId,

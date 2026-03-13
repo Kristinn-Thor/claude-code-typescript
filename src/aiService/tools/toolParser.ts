@@ -26,7 +26,7 @@ const argumentsParser = (func?: ToolFunction) => {
   let args;
   try {
     args = JSON.parse(func.arguments);
-  } catch (err) {
+  } catch {
     return {};
   }
   return args;

@@ -22,13 +22,14 @@ export function isAllowedCommand(command: string): boolean {
   const rmMatch = command.match(/^rm(?:\s+(.*))?$/);
   const lsMatch = command.match(/^ls(?:\s+(.*))?$/);
 
-  let targetPath = '';
-  if (touchMatch) targetPath = touchMatch[1] || '';
-  else if (mkdirMatch) targetPath = mkdirMatch[1] || '';
-  else if (rmMatch) targetPath = rmMatch[1] || '';
-  else if (lsMatch) targetPath = lsMatch[1] || '';
+  let arg: string | undefined;
+  if (touchMatch) arg = touchMatch[1];
+  else if (mkdirMatch) arg = mkdirMatch[1];
+  else if (rmMatch) arg = rmMatch[1];
+  else if (lsMatch) arg = lsMatch[1];
   else return false;
 
+  const targetPath = arg || '';
   // If no argument is provided (e.g., 'ls'), allow
   if (targetPath === '') {
     // Only allow for ls, not for touch/mkdir/rm

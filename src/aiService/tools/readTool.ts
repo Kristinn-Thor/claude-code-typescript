@@ -26,7 +26,7 @@ export default function readTool(
       tool_call_id: toolCallId,
       content: data,
     };
-  } catch (err) {
+  } catch {
     return {
       role: 'tool',
       tool_call_id: toolCallId,
