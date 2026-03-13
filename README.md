@@ -5,8 +5,6 @@ This project is based on the CodeCrafters "Build your own Claude Code challenge"
 Claude Code is an AI coding assistant that uses Large Language Models (LLMs) to
 understand code and perform actions through tool calls.
 
-## To run
-
 ## Setup: Environment Variables
 
 Before running the project, create a `.env` file in the project root with the following variables:
