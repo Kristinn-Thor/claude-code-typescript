@@ -1,6 +1,6 @@
 import path from 'path';
 import exec from 'child_process';
-import type {ToolResponse} from './toolParser';
+import type {ToolResponse} from './toolParser.ts';
 
 const PROJECT_DIR = path.resolve(__dirname, '../../');
 

@@ -1,14 +1,14 @@
 import OpenAI from 'openai';
 
-import toolParser from './tools/toolParser';
-import {ReadTool} from './tools/readTool';
+import toolParser from './tools/toolParser.js';
+import {ReadTool} from './tools/readTool.js';
 import type {
   ChatCompletionAssistantMessageParam,
   ChatCompletionToolMessageParam,
   ChatCompletionUserMessageParam,
 } from 'openai/resources';
-import {WriteTool} from './tools/writeTool';
-import {BashTool} from './tools/bashTool';
+import {WriteTool} from './tools/writeTool.js';
+import {BashTool} from './tools/bashTool.js';
 
 async function cli() {
   const [, , flag, prompt] = process.argv;

@@ -1,6 +1,6 @@
-import bashTool from './bashTool';
-import readTool from './readTool';
-import writeTool from './writeTool';
+import bashTool from './bashTool.js';
+import readTool from './readTool.js';
+import writeTool from './writeTool.js';
 
 type ToolFunction = {
   name?: string;

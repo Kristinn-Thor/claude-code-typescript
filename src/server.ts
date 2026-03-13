@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import api from './aiService/api';
+import api from './aiService/api.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -32,5 +32,9 @@ app.post('/assistant', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  if (!process.env.RENDER || process.env.RENDER === 'false') {
+    console.log(`Server running at http://localhost:${port}`);
+  } else {
+    console.log(`Server running on port ${port}`);
+  }
 });

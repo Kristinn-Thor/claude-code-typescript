@@ -1,5 +1,5 @@
 import fs from 'fs';
-import type {ToolResponse} from './toolParser';
+import type {ToolResponse} from './toolParser.js';
 
 /**
  * Writes the contents of a file at the given path.

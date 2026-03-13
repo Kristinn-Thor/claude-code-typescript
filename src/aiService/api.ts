@@ -5,10 +5,10 @@ import type {
   ChatCompletionUserMessageParam,
 } from 'openai/resources';
 
-import toolParser from './tools/toolParser';
-import {ReadTool} from './tools/readTool';
-import {WriteTool} from './tools/writeTool';
-import {BashTool} from './tools/bashTool';
+import toolParser from './tools/toolParser.js';
+import {ReadTool} from './tools/readTool.js';
+import {WriteTool} from './tools/writeTool.js';
+import {BashTool} from './tools/bashTool.js';
 
 type MessageParam =
   | ChatCompletionUserMessageParam
