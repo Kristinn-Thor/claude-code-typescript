@@ -1,7 +1,10 @@
 import path from 'path';
+import {fileURLToPath} from 'url';
 import exec from 'child_process';
 import type {ToolResponse} from './toolParser.ts';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const PROJECT_DIR = path.resolve(__dirname, '../../');
 
 /**
