@@ -7,7 +7,7 @@
   },
   "description": "Claude Code assistant replica, based on CodeCrafters challenge",
   "scripts": {
-    "build": "tsc",
+    "build": "bun install && tsc",
     "start": "node dist/server.js",
     "dev": "bun run --watch src/server.ts"
   },
