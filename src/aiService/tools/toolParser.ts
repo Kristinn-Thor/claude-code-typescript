@@ -1,4 +1,4 @@
-import bashTool, {BashTool} from './bashTool';
+import bashTool from './bashTool';
 import readTool from './readTool';
 import writeTool from './writeTool';
 

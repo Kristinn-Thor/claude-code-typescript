@@ -10,7 +10,7 @@ import type {
 import {WriteTool} from './tools/writeTool';
 import {BashTool} from './tools/bashTool';
 
-async function main() {
+async function cli() {
   const [, , flag, prompt] = process.argv;
   const apiKey = process.env.OPENROUTER_API_KEY;
   const baseURL =
@@ -82,7 +82,7 @@ async function main() {
   // console.log('Full message history:', messageHistory);
 }
 
-main();
+cli();
 
 // Test commands:
 // "List files using ls and delete the old readme file. Always respond with Deleted README_old.md if it is deleted. If it does not exist, create it and then delet it."
