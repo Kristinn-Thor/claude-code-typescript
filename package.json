@@ -12,7 +12,7 @@
   "description": "Claude Code assistant replica, based on CodeCrafters challenge",
   "scripts": {
     "lint": "bunx eslint .",
-    "build": "bun lint && bun install && tsc",
+    "build": "bun install && bun lint && tsc",
     "start": "node dist/server.js",
     "dev": "bun run --watch src/server.ts"
   },
