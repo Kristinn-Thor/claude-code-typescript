@@ -32,6 +32,7 @@ export default async function api(request: ApiRequest): Promise<ApiResponse> {
   const baseURL =
     process.env.OPENROUTER_BASE_URL ?? 'https://openrouter.ai/api/v1';
   const model = process.env.OPENROUTER_MODEL ?? 'anthropic/claude-haiku-4.5';
+  console.log('Using model:', model);
 
   if (!apiKey) {
     return {
@@ -47,15 +48,12 @@ export default async function api(request: ApiRequest): Promise<ApiResponse> {
   });
 
   const messageHistory: MessageParam[] = [
-    {role: 'user', content: request.prompt},
     ...(request.chat_history ?? []),
+    {role: 'user', content: request.prompt},
   ];
   let finished = false;
   let content = '';
   let error: boolean = false;
-
-  // You can use print statements as follows for debugging, they'll be visible when running tests.
-  console.error('Logs from your program will appear here!');
 
   while (!finished) {
     try {
@@ -91,8 +89,7 @@ export default async function api(request: ApiRequest): Promise<ApiResponse> {
       finished = true;
     }
   }
-  // console.log(content);
-  // console.log('Full message history:', messageHistory);
+
   return {
     success: !error,
     message: error ? 'An error occurred during processing.' : undefined,

@@ -37,9 +37,6 @@ async function cli() {
   let finished = false;
   let content = '';
 
-  // You can use print statements as follows for debugging, they'll be visible when running tests.
-  console.error('Logs from your program will appear here!');
-
   while (!finished) {
     try {
       const response = await client.chat.completions.create({
@@ -74,7 +71,6 @@ async function cli() {
     }
   }
   console.log(content);
-  // console.log('Full message history:', messageHistory);
 }
 
 cli();

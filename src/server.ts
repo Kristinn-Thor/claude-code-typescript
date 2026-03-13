@@ -14,7 +14,10 @@ app.post('/assistant', async (req, res) => {
     return res.status(400).json({error: 'Prompt is required'});
   }
   try {
-    const response = await api(prompt);
+    const response = await api({
+      prompt,
+      chat_history: body.chat_history,
+    });
     res.json(response);
   } catch (error) {
     console.error('Error processing request:', error);
