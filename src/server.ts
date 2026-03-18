@@ -10,6 +10,10 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+  res.send('ping');
+});
+
 app.post('/assistant', async (req, res) => {
   const body = req.body;
   const prompt = body.prompt;
