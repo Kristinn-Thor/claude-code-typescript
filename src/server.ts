@@ -1,10 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import api from './aiService/api.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Enable CORS for all routes
+app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/assistant', async (req, res) => {
